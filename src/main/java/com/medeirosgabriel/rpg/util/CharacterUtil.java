@@ -83,8 +83,15 @@ public class CharacterUtil {
         return CharacterType.values()[pick];
     }
 
-
     public static int getRandomNumber(int max) {
         return new Random().nextInt(max);
+    }
+
+    public static long calculateDamage(Character character) {
+        int damage = 0;
+        for (int i = 0; i < character.getDiceQuantity(); i++) {
+            damage += getRandomNumber(character.getDiceFaces().intValue());
+        }
+        return damage;
     }
 }

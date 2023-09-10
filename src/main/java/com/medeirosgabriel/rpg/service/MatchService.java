@@ -68,10 +68,12 @@ public class MatchService {
                 Long defense = CharacterUtil.getRandomNumber(12) + enemy.getDefense() + enemy.getAgility();
                 if (attack > defense) {
                     match.setNextStep(NextStep.CALCULATE_DAMAGE);
+                    this.matchRepository.save(match);
                     return "Calculate your damage";
                 } else {
                     match.setNextStep(NextStep.DEFENSE);
-                    return "The enemy defended itself";
+                    this.matchRepository.save(match);
+                    return "The enemy defended itself from the attack";
                 }
             } else {
                 throw new TurnException("It's not your turn to attack");
@@ -92,9 +94,20 @@ public class MatchService {
                 Long attack = CharacterUtil.getRandomNumber(12) + enemy.getForce() + enemy.getAgility();
                 Long defense = CharacterUtil.getRandomNumber(12) + myCharacter.getDefense() + myCharacter.getAgility();
                 if (attack > defense) {
-                    // IMPLEMENT
+                    long enemyDamage = CharacterUtil.calculateDamage(enemy);
+                    myCharacter.takeDamage(enemyDamage);
+                    if (myCharacter.isAlive()) {
+                        match.setNextStep(NextStep.ATTACK);
+                        this.matchRepository.save(match);
+                        return String.format("You took %d damage from %s", enemyDamage, enemy.getName());
+                    } else {
+                        match.setNextStep(NextStep.FINISHED);
+                        this.matchRepository.save(match);
+                        return String.format("you were killed with %d damage from opponent %s", enemyDamage, enemy.getName());
+                    }
                 } else {
                     match.setNextStep(NextStep.ATTACK);
+                    this.matchRepository.save(match);
                     return "You defended yourself from the attack";
                 }
             } else {
@@ -110,10 +123,20 @@ public class MatchService {
             throw new MatchNotFoundException("Match not found");
         } else {
             Match match = opt.get();
-            if (match.getNextStep().equals(NextStep.DEFENSE)) {
+            if (match.getNextStep().equals(NextStep.CALCULATE_DAMAGE)) {
                 Character myCharacter = match.getMyCharacter();
                 Character enemy = match.getEnemy();
-                // IMPLEMENT
+                long myDamage = CharacterUtil.calculateDamage(myCharacter);
+                enemy.takeDamage(myDamage);
+                if (enemy.isAlive()) {
+                    match.setNextStep(NextStep.DEFENSE);
+                    this.matchRepository.save(match);
+                    return String.format("The enemy %s took %d damage from you", enemy.getName(), myDamage);
+                } else {
+                    match.setNextStep(NextStep.FINISHED);
+                    this.matchRepository.save(match);
+                    return String.format("The enemy %s was killed by you with %d damage", enemy.getName(), myDamage);
+                }
             } else {
                 throw new TurnException("It's not your turn to calculate damage");
             }

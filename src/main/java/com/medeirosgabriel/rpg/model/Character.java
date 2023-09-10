@@ -34,4 +34,12 @@ public class Character {
         this.diceQuantity = diceQuantity;
         this.diceFaces = diceFaces;
     }
+
+    public void takeDamage(long damage) {
+        this.pv -= damage;
+    }
+
+    public boolean isAlive() {
+        return this.pv > 0;
+    }
 }
