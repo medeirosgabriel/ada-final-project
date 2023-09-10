@@ -3,10 +3,7 @@ package com.medeirosgabriel.rpg.service;
 import com.medeirosgabriel.rpg.dto.CreateMatchDTO;
 import com.medeirosgabriel.rpg.dto.MatchActionDTO;
 import com.medeirosgabriel.rpg.enums.NextStep;
-import com.medeirosgabriel.rpg.exceptions.CharacterNotFoundException;
-import com.medeirosgabriel.rpg.exceptions.CharacterTypeNotFoundException;
-import com.medeirosgabriel.rpg.exceptions.MatchNotFoundException;
-import com.medeirosgabriel.rpg.exceptions.TurnException;
+import com.medeirosgabriel.rpg.exceptions.*;
 import com.medeirosgabriel.rpg.model.Character;
 import com.medeirosgabriel.rpg.model.Match;
 import com.medeirosgabriel.rpg.repository.MatchRepository;
@@ -24,34 +21,38 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final LogService logService;
 
-    public Match createMatch(CreateMatchDTO createMatchDTO) throws CharacterNotFoundException, CharacterTypeNotFoundException {
+    public Match createMatch(CreateMatchDTO createMatchDTO) throws CharacterNotFoundException, CharacterTypeNotFoundException, CreateMatchException {
         Character myCharacter = this.characterService.getCharacterById(createMatchDTO.getCharacterId());
-        Character enemy = CharacterUtil.randomCharacter();
-        Integer myNumber = CharacterUtil.getRandomNumber(20);
-        Integer enemyNumber = CharacterUtil.getRandomNumber(20);
-        Match match = new Match();
-        if (myNumber >= enemyNumber) {
-            String message = String.format("Match %d started | Character Chosen: %s | Enemy Id = %s | You start attacking",
-                    match.getId(),
-                    myCharacter.getName(),
-                    enemy.getName());
-            this.logService.createLog(message);
-            match.setNextStep(NextStep.ATTACK);
+        if (myCharacter.isAlive()) {
+            Character enemy = CharacterUtil.randomCharacter();
+            Integer myNumber = CharacterUtil.getRandomNumber(20);
+            Integer enemyNumber = CharacterUtil.getRandomNumber(20);
+            Match match = new Match();
+            if (myNumber >= enemyNumber) {
+                String message = String.format("Match %d started | Character Chosen: %s | Enemy Id = %s | You start attacking",
+                        match.getId(),
+                        myCharacter.getName(),
+                        enemy.getName());
+                this.logService.createLog(message);
+                match.setNextStep(NextStep.ATTACK);
+            } else {
+                String message = String.format("Match %d started | Character Chosen: %s | Enemy Id = %s | Enemy start attacking",
+                        match.getId(),
+                        myCharacter.getName(),
+                        enemy.getName());
+                this.logService.createLog(message);
+                match.setNextStep(NextStep.DEFENSE);
+            }
+
+            match.setMyCharacter(myCharacter);
+            match.setEnemy(enemy);
+            this.characterService.saveCharacter(enemy);
+            this.matchRepository.save(match);
+            return match;
+
         } else {
-            String message = String.format("Match %d started | Character Chosen: %s | Enemy Id = %s | Enemy start attacking",
-                    match.getId(),
-                    myCharacter.getName(),
-                    enemy.getName());
-            this.logService.createLog(message);
-            match.setNextStep(NextStep.DEFENSE);
+            throw new CreateMatchException("Your character is dead");
         }
-
-        match.setMyCharacter(myCharacter);
-        match.setEnemy(enemy);
-        this.characterService.saveCharacter(enemy);
-        this.matchRepository.save(match);
-
-        return match;
     }
 
     public String attack(MatchActionDTO matchActionDTO) throws MatchNotFoundException, TurnException {
