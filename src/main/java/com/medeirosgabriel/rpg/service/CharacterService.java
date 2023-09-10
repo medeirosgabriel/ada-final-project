@@ -17,14 +17,18 @@ import java.util.Optional;
 public class CharacterService {
 
     private final CharacterRepository characterRepository;
-
+    private final LogService logService;
 
     public Character saveCharacter(CharacterDTO characterDTO) throws CharacterTypeNotFoundException {
         Character character = CharacterUtil.createCharacter(characterDTO);
+        String message = String.format("Character %s created", character.getName());
+        this.logService.createLog(message);
         return this.characterRepository.save(character);
     }
 
     public Character saveCharacter(Character character) {
+        String message = String.format("Character %s created", character.getName());
+        this.logService.createLog(message);
         return this.characterRepository.save(character);
     }
 
@@ -40,6 +44,8 @@ public class CharacterService {
         if (character.isEmpty()) {
             throw new CharacterNotFoundException("Character Not Found");
         }
+        String message = String.format("Character %s removed", character.get().getName());
+        this.logService.createLog(message);
         this.characterRepository.deleteById(id);
     }
     public Character getCharacterById(Long id) throws CharacterNotFoundException {

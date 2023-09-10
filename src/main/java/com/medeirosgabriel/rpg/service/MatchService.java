@@ -16,6 +16,7 @@ public class MatchService {
 
     private final CharacterService characterService;
     private final MatchRepository matchRepository;
+    private final LogService logService;
 
     public Match createMatch(CreateMatchDTO createMatchDTO) throws CharacterNotFoundException, CharacterTypeNotFoundException {
         Character myCharacter = this.characterService.getCharacterById(createMatchDTO.getCharacterId());
@@ -32,6 +33,14 @@ public class MatchService {
         match.setEnemy(enemy);
         this.characterService.saveCharacter(enemy);
         this.matchRepository.save(match);
+
+        String message = String.format("Match %d started. Character Chosen = %s Enemy Id = %s",
+                match.getId(),
+                myCharacter.getName(),
+                enemy.getName());
+
+        this.logService.createLog(message);
+
         return match;
     }
 }
