@@ -1,5 +1,6 @@
 package com.medeirosgabriel.rpg.model;
 
+import com.medeirosgabriel.rpg.enums.NextStep;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -18,5 +19,5 @@ public class Match {
     @OneToOne
     @JoinColumn(name = "enemy_id")
     private Character enemy;
-    private Integer attackTurn;
+    private NextStep nextStep;
 }

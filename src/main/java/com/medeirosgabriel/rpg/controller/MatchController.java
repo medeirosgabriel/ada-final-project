@@ -1,9 +1,12 @@
 package com.medeirosgabriel.rpg.controller;
 
 import com.medeirosgabriel.rpg.dto.CreateMatchDTO;
+import com.medeirosgabriel.rpg.dto.MatchActionDTO;
+import com.medeirosgabriel.rpg.exceptions.MatchNotFoundException;
 import com.medeirosgabriel.rpg.model.Match;
 import com.medeirosgabriel.rpg.service.MatchService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,4 +27,36 @@ public class MatchController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping(value = "/attack/{id}")
+    public ResponseEntity<String> attack(@RequestBody MatchActionDTO matchActionDTO) {
+        try {
+            String response = this.matchService.attack(matchActionDTO);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+    }
+
+    @PostMapping(value = "/calculate/{id}")
+    public ResponseEntity<String> calculate(@RequestBody MatchActionDTO matchActionDTO) {
+        try {
+            String response = this.matchService.calculate(matchActionDTO);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+    }
+
+
+    @PostMapping(value = "/defense/{id}")
+    public ResponseEntity<String> defense(@RequestBody MatchActionDTO matchActionDTO) {
+        try {
+            String response = this.matchService.defense(matchActionDTO);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+    }
+
 }
