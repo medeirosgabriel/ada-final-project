@@ -25,21 +25,25 @@ public class MatchService {
         Integer enemyNumber = CharacterUtil.getRandomNumber(20);
         Match match = new Match();
         if (myNumber >= enemyNumber) {
+            String message = String.format("Match %d started | Character Chosen: %s | Enemy Id = %s | You start attacking",
+                    match.getId(),
+                    myCharacter.getName(),
+                    enemy.getName());
+            this.logService.createLog(message);
             match.setAttackTurn(1);
         } else {
+            String message = String.format("Match %d started | Character Chosen: %s | Enemy Id = %s | Enemy start attacking",
+                    match.getId(),
+                    myCharacter.getName(),
+                    enemy.getName());
+            this.logService.createLog(message);
             match.setAttackTurn(2);
         }
+
         match.setMyCharacter(myCharacter);
         match.setEnemy(enemy);
         this.characterService.saveCharacter(enemy);
         this.matchRepository.save(match);
-
-        String message = String.format("Match %d started. Character Chosen = %s Enemy Id = %s",
-                match.getId(),
-                myCharacter.getName(),
-                enemy.getName());
-
-        this.logService.createLog(message);
 
         return match;
     }
