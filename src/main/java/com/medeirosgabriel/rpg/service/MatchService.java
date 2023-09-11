@@ -51,7 +51,9 @@ public class MatchService {
             return match;
 
         } else {
-            throw new CreateMatchException("Your character is dead");
+            String message = "Your character is dead. Create other  character";
+            this.logService.createLog(message);
+            throw new CreateMatchException(message);
         }
     }
 
@@ -59,7 +61,9 @@ public class MatchService {
         Long id = matchActionDTO.getMatchId();
         Optional<Match> opt = this.matchRepository.findById(id);
         if (opt.isEmpty()) {
-            throw new MatchNotFoundException("Match not found");
+            String message = "Match not found";
+            this.logService.createLog(message);
+            throw new MatchNotFoundException(message);
         } else {
             Match match = opt.get();
             if (match.getNextStep().equals(NextStep.ATTACK)) {
@@ -70,11 +74,17 @@ public class MatchService {
                 if (attack > defense) {
                     match.setNextStep(NextStep.CALCULATE_DAMAGE);
                     this.matchRepository.save(match);
-                    return "Calculate your damage";
+
+                    String message = String.format("Attack: %d Defense %d. Calculate your damage", attack, defense);
+                    this.logService.createLog(message);
+                    return message;
                 } else {
                     match.setNextStep(NextStep.DEFENSE);
                     this.matchRepository.save(match);
-                    return "The enemy defended itself from the attack";
+
+                    String message = String.format("Attack: %d Defense %d. The enemy defended itself from the attack", attack, defense);
+                    this.logService.createLog(message);
+                    return message;
                 }
             } else {
                 throw new TurnException("It's not your turn to attack");
@@ -86,7 +96,9 @@ public class MatchService {
         Long id = matchActionDTO.getMatchId();
         Optional<Match> opt = this.matchRepository.findById(id);
         if (opt.isEmpty()) {
-            throw new MatchNotFoundException("Match not found");
+            String message = "Match not found";
+            this.logService.createLog(message);
+            throw new MatchNotFoundException(message);
         } else {
             Match match = opt.get();
             if (match.getNextStep().equals(NextStep.DEFENSE)) {
@@ -100,19 +112,30 @@ public class MatchService {
                     if (myCharacter.isAlive()) {
                         match.setNextStep(NextStep.ATTACK);
                         this.matchRepository.save(match);
-                        return String.format("You took %d damage from %s", enemyDamage, enemy.getName());
+
+                        String message = String.format("You took %d damage from %s", enemyDamage, enemy.getName());
+                        this.logService.createLog(message);
+                        return message;
                     } else {
                         match.setNextStep(NextStep.FINISHED);
                         this.matchRepository.save(match);
-                        return String.format("you were killed with %d damage from opponent %s", enemyDamage, enemy.getName());
+
+                        String message = String.format("You were killed with %d damage from opponent %s", enemyDamage, enemy.getName());
+                        this.logService.createLog(message);
+                        return message;
                     }
                 } else {
                     match.setNextStep(NextStep.ATTACK);
                     this.matchRepository.save(match);
-                    return "You defended yourself from the attack";
+
+                    String message = String.format("You defended yourself from the %s attack", enemy.getName());
+                    this.logService.createLog(message);
+                    return message;
                 }
             } else {
-                throw new TurnException("It's not your turn to defense");
+                String message = "It's not your turn to defense";
+                this.logService.createLog(message);
+                return message;
             }
         }
     }
@@ -121,7 +144,9 @@ public class MatchService {
         Long id = matchActionDTO.getMatchId();
         Optional<Match> opt = this.matchRepository.findById(id);
         if (opt.isEmpty()) {
-            throw new MatchNotFoundException("Match not found");
+            String message = "Match not found";
+            this.logService.createLog(message);
+            throw new MatchNotFoundException(message);
         } else {
             Match match = opt.get();
             if (match.getNextStep().equals(NextStep.CALCULATE_DAMAGE)) {
@@ -132,14 +157,22 @@ public class MatchService {
                 if (enemy.isAlive()) {
                     match.setNextStep(NextStep.DEFENSE);
                     this.matchRepository.save(match);
-                    return String.format("The enemy %s took %d damage from you", enemy.getName(), myDamage);
+
+                    String message = String.format("The enemy %s took %d damage from you", enemy.getName(), myDamage);
+                    this.logService.createLog(message);
+                    return message;
                 } else {
                     match.setNextStep(NextStep.FINISHED);
                     this.matchRepository.save(match);
-                    return String.format("The enemy %s was killed by you with %d damage", enemy.getName(), myDamage);
+
+                    String message = String.format("The enemy %s was killed by you with %d damage", enemy.getName(), myDamage);
+                    this.logService.createLog(message);
+                    return message;
                 }
             } else {
-                throw new TurnException("It's not your turn to calculate damage");
+                String message = "It's not your turn to calculate damage";
+                this.logService.createLog(message);
+                throw new TurnException(message);
             }
         }
     }

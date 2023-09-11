@@ -28,7 +28,7 @@ public class MatchController {
         }
     }
 
-    @PostMapping(value = "/attack/{id}")
+    @PostMapping(value = "/attack")
     public ResponseEntity<String> attack(@RequestBody MatchActionDTO matchActionDTO) {
         try {
             String response = this.matchService.attack(matchActionDTO);
@@ -38,7 +38,7 @@ public class MatchController {
         }
     }
 
-    @PostMapping(value = "/calculate/{id}")
+    @PostMapping(value = "/calculate")
     public ResponseEntity<String> calculate(@RequestBody MatchActionDTO matchActionDTO) {
         try {
             String response = this.matchService.calculate(matchActionDTO);
@@ -49,7 +49,7 @@ public class MatchController {
     }
 
 
-    @PostMapping(value = "/defense/{id}")
+    @PostMapping(value = "/defense")
     public ResponseEntity<String> defense(@RequestBody MatchActionDTO matchActionDTO) {
         try {
             String response = this.matchService.defense(matchActionDTO);
