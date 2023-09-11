@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -23,5 +24,9 @@ public class LogService {
         String todayAsString = df.format(today);
         Log log = new Log(message, todayAsString);
         return this.logRepository.save(log);
+    }
+
+    public List<Log> listLogs() {
+        return this.logRepository.findAll();
     }
 }
