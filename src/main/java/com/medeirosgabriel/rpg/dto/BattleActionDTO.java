@@ -3,7 +3,7 @@ package com.medeirosgabriel.rpg.dto;
 import lombok.Data;
 
 @Data
-public class MatchActionDTO {
+public class BattleActionDTO {
 
-    private Long matchId;
+    private Long battleId;
 }

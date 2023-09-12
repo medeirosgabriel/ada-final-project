@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateMatchDTO {
+public class CreateBattleDTO {
 
     private Long characterId;
 }

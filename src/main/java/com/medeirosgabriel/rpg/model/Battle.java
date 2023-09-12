@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Entity
 @Data
 @Component
-public class Match {
+public class Battle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
