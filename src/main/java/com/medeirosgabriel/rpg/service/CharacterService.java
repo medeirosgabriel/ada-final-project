@@ -1,6 +1,7 @@
 package com.medeirosgabriel.rpg.service;
 
 import com.medeirosgabriel.rpg.dto.CharacterDTO;
+import com.medeirosgabriel.rpg.dto.UpdateCharacterDTO;
 import com.medeirosgabriel.rpg.exceptions.CharacterNotFoundException;
 import com.medeirosgabriel.rpg.exceptions.CharacterTypeNotFoundException;
 import com.medeirosgabriel.rpg.model.Character;
@@ -35,7 +36,9 @@ public class CharacterService {
     public List<Character> listCharacters() {
         return this.characterRepository.findAll();
     }
-    public Character updateCharacter(Character character) {
+    public Character updateCharacter(UpdateCharacterDTO updateCharacterDTO) throws CharacterNotFoundException {
+        Character character = this.getCharacterById(updateCharacterDTO.getId());
+        character = CharacterUtil.updateCharacter(updateCharacterDTO, character);
         return this.characterRepository.save(character);
     }
 

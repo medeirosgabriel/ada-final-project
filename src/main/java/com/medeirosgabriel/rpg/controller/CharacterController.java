@@ -1,6 +1,7 @@
 package com.medeirosgabriel.rpg.controller;
 
 import com.medeirosgabriel.rpg.dto.CharacterDTO;
+import com.medeirosgabriel.rpg.dto.UpdateCharacterDTO;
 import com.medeirosgabriel.rpg.model.Character;
 import com.medeirosgabriel.rpg.service.CharacterService;
 import lombok.AllArgsConstructor;
@@ -35,9 +36,13 @@ public class CharacterController {
     }
 
     @PutMapping
-    public ResponseEntity<String> updateCharacter(@RequestBody Character character) {
-        Character newCharacter = this.characterService.updateCharacter(character);
-        return new ResponseEntity<>(String.format("Character %d updated", character.getId()), HttpStatus.OK);
+    public ResponseEntity<String> updateCharacter(@RequestBody UpdateCharacterDTO updateCharacterDTO) {
+        try {
+            Character newCharacter = this.characterService.updateCharacter(updateCharacterDTO);
+            return new ResponseEntity<>(String.format("Character %d updated", newCharacter.getId()), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping(value = "/{id}")

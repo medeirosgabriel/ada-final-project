@@ -1,6 +1,7 @@
 package com.medeirosgabriel.rpg.util;
 
 import com.medeirosgabriel.rpg.dto.CharacterDTO;
+import com.medeirosgabriel.rpg.dto.UpdateCharacterDTO;
 import com.medeirosgabriel.rpg.enums.CharacterType;
 import com.medeirosgabriel.rpg.exceptions.CharacterTypeNotFoundException;
 import com.medeirosgabriel.rpg.model.Character;
@@ -69,6 +70,18 @@ public class CharacterUtil {
         }
 
         return characterBuilder.build();
+    }
+
+    public static Character updateCharacter(UpdateCharacterDTO updateCharacterDTO, Character character) {
+        character.setCharacterType(updateCharacterDTO.getCharacterType());
+        character.setName(updateCharacterDTO.getName());
+        character.setPv(updateCharacterDTO.getPv());
+        character.setForce(updateCharacterDTO.getForce());
+        character.setDefense(updateCharacterDTO.getDefense());
+        character.setAgility(updateCharacterDTO.getAgility());
+        character.setDiceQuantity(updateCharacterDTO.getDiceQuantity());
+        character.setDiceFaces(updateCharacterDTO.getDiceFaces());
+        return character;
     }
 
     public static Character randomCharacter() throws CharacterTypeNotFoundException {
